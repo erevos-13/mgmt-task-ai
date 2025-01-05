@@ -1,0 +1,27 @@
+{
+  "name": "@myorg/task-mgmt-api-e2e",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "name": "task-mgmt-api-e2e",
+    "projectType": "application",
+    "implicitDependencies": [
+      "task-mgmt-api"
+    ],
+    "targets": {
+      "e2e": {
+        "executor": "@nx/jest:jest",
+        "outputs": [
+          "{workspaceRoot}/coverage/{e2eProjectRoot}"
+        ],
+        "options": {
+          "jestConfig": "apps/task-mgmt-api-e2e/jest.config.ts",
+          "passWithNoTests": true
+        },
+        "dependsOn": [
+          "task-mgmt-api:build"
+        ]
+      }
+    }
+  }
+}

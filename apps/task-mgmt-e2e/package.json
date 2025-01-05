@@ -1,0 +1,12 @@
+{
+  "name": "task-mgmt-e2e",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "projectType": "application",
+    "sourceRoot": "apps/task-mgmt-e2e/src",
+    "implicitDependencies": [
+      "task-mgmt"
+    ]
+  }
+}

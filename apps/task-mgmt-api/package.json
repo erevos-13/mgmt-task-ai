@@ -1,0 +1,36 @@
+{
+  "name": "@myorg/task-mgmt-api",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "name": "task-mgmt-api",
+    "projectType": "application",
+    "sourceRoot": "apps/task-mgmt-api/src",
+    "targets": {
+      "serve": {
+        "executor": "@nx/js:node",
+        "defaultConfiguration": "development",
+        "dependsOn": [
+          "build"
+        ],
+        "options": {
+          "buildTarget": "task-mgmt-api:build",
+          "runBuildTargetDependencies": false
+        },
+        "configurations": {
+          "development": {
+            "buildTarget": "task-mgmt-api:build:development"
+          },
+          "production": {
+            "buildTarget": "task-mgmt-api:build:production"
+          }
+        }
+      },
+      "test": {
+        "options": {
+          "passWithNoTests": true
+        }
+      }
+    }
+  }
+}

@@ -2,5 +2,18 @@
   "extends": "./tsconfig.base.json",
   "compileOnSave": false,
   "files": [],
-  "references": []
+  "references": [
+    {
+      "path": "./apps/task-mgmt-api-e2e"
+    },
+    {
+      "path": "./apps/task-mgmt-api"
+    },
+    {
+      "path": "./apps/task-mgmt-e2e"
+    },
+    {
+      "path": "./apps/task-mgmt"
+    }
+  ]
 }
