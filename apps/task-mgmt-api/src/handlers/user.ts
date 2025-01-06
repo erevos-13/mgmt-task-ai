@@ -42,7 +42,8 @@ export const signin = async (
     }
 
     const token = createJWT(user);
-    res.json({ token });
+    const { password, ...userData } = user;
+    res.json({ token, user: userData });
   } catch (error: any) {
     error.type = 'input';
     next(error);

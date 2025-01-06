@@ -1,7 +1,9 @@
 import { FC, useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../stores/auth.store';
 
 const Nav: FC = () => {
+  const { user, logout } = useAuthStore();
   const navigate = useNavigate();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -61,11 +63,11 @@ const Nav: FC = () => {
               >
                 <div className="h-8 w-8 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center">
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                    JD
+                    {user?.email.substring(0, 2).toUpperCase()}
                   </span>
                 </div>
                 <span className="text-gray-700 dark:text-gray-200 font-medium">
-                  John Doe
+                  {user?.email}
                 </span>
               </button>
 
@@ -90,7 +92,10 @@ const Nav: FC = () => {
                   >
                     Toggle Theme
                   </button>
-                  <button className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600">
+                  <button
+                    onClick={logout}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
+                  >
                     Sign out
                   </button>
                 </div>
