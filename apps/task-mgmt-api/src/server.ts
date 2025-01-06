@@ -7,11 +7,13 @@ import { createNewUser } from './handlers/user';
 import { validate } from './modules/middleware';
 import { body } from 'express-validator';
 import cors from 'cors';
+import bodyParser from 'body-parser';
 const appExpress: express.Application = express();
-appExpress.use(cors());
-appExpress.use(express.json());
 
-appExpress.use(express.urlencoded({ extended: true }));
+appExpress.use(cors());
+appExpress.use(bodyParser.json());
+
+appExpress.use(bodyParser.urlencoded({ extended: true }));
 appExpress.use('/assets', express.static(path.join(__dirname, 'assets')));
 
 appExpress.post(

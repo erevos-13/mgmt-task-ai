@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import { body, validationResult } from 'express-validator';
+import { updateProfile } from './handlers/user';
+import { upload } from './middleware/upload';
 
 const router: Router = Router();
 
-router.get('/user', (req, res) => {
-  res.send({ message: 'Hello' });
-});
+// User Routes
+router.patch('/user/profile', upload.single('file'), updateProfile);
 
 export default router;

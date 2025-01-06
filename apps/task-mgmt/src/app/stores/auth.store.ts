@@ -1,84 +1,67 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import { User } from '../models/user';
 import { authService } from '../services/auth.service';
 
 interface AuthState {
   user: User | null;
-  token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  error: string | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  setUser: (user: User) => void;
-  setToken: (token: string | null) => void;
-  setIsLoading: (isLoading: boolean) => void;
-  updateProfile: (userData: Partial<User>) => Promise<void>;
+  updateProfile: (data: FormData) => Promise<User>;
+  setUser: (user: User | null) => void;
 }
 
-export const useAuthStore = create<AuthState>()(
-  persist(
-    (set, get) => ({
-      user: null,
-      token: null,
-      isAuthenticated: false,
-      isLoading: false,
+export const useAuthStore = create<AuthState>((set) => ({
+  user: null,
+  isAuthenticated: false,
+  isLoading: false,
+  error: null,
 
-      setUser: (user) => set({ user }),
-      setToken: (token) => set({ token, isAuthenticated: !!token }),
-      setIsLoading: (isLoading) => set({ isLoading }),
+  setUser: (user) => {
+    set({ user, isAuthenticated: !!user });
+  },
 
-      login: async (email, password) => {
-        try {
-          set({ isLoading: true });
-          const response = await authService.login({ email, password });
-          set({
-            user: response.user,
-            token: response.token,
-            isAuthenticated: true,
-          });
-        } catch (error) {
-          throw error;
-        } finally {
-          set({ isLoading: false });
-        }
-      },
-
-      logout: async () => {
-        try {
-          set({ isLoading: true });
-          await authService.logout();
-        } finally {
-          set({
-            user: null,
-            token: null,
-            isAuthenticated: false,
-            isLoading: false,
-          });
-        }
-      },
-
-      updateProfile: async (userData) => {
-        try {
-          set({ isLoading: true });
-          // TODO: Add API call to update profile
-          const currentUser = get().user;
-          if (currentUser) {
-            const updatedUser = { ...currentUser, ...userData };
-            set({ user: updatedUser });
-          }
-        } finally {
-          set({ isLoading: false });
-        }
-      },
-    }),
-    {
-      name: 'auth-storage',
-      partialize: (state) => ({
-        user: state.user,
-        token: state.token,
-        isAuthenticated: state.isAuthenticated,
-      }),
+  login: async (email: string, password: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await authService.login({ email, password });
+      localStorage.setItem('token', response.token);
+      set({ user: response.user, isAuthenticated: true });
+    } catch (error) {
+      set({ error: 'Failed to login' });
+      throw error;
+    } finally {
+      set({ isLoading: false });
     }
-  )
-);
+  },
+
+  logout: async () => {
+    set({ isLoading: true });
+    try {
+      await authService.logout();
+      localStorage.removeItem('token');
+      set({ user: null, isAuthenticated: false });
+    } catch (error) {
+      set({ error: 'Failed to logout' });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  updateProfile: async (data: FormData) => {
+    set({ isLoading: true, error: null });
+    try {
+      const updatedUser = await authService.updateProfile(data);
+      set({ user: updatedUser });
+      return updatedUser;
+    } catch (error) {
+      set({ error: 'Failed to update profile' });
+      throw error;
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+}));
