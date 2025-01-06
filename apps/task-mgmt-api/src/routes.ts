@@ -1,8 +1,9 @@
 import { Router } from 'express';
-import { body } from 'express-validator';
+import { body, validationResult } from 'express-validator';
+
 const router: Router = Router();
 
-router.get('/', (req, res) => {
+router.get('/user', (req, res) => {
   res.send({ message: 'Hello' });
 });
 
