@@ -43,6 +43,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
+    setIsLoading(true);
     // Check for saved token and user data on mount
     const savedToken = localStorage.getItem('token');
     const savedUser = localStorage.getItem('user');
@@ -50,6 +51,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     if (savedToken && savedUser) {
       setToken(savedToken);
       setUser(JSON.parse(savedUser));
+      navigate('/');
     }
     setIsLoading(false);
   }, []);
@@ -60,6 +62,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     localStorage.setItem('token', newToken);
     localStorage.setItem('user', JSON.stringify(userData));
     setIsLoading(false);
+    navigate('/');
   };
 
   const logout = () => {

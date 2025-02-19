@@ -8,3 +8,8 @@ export interface User {
   imagePublicId?: string;
   role: 'ADMIN' | 'MANAGER' | 'CONTRIBUTOR';
 }
+
+export interface RegisterData {
+  email: string;
+  password: string;
+}

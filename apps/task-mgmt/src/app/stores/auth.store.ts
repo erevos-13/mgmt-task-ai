@@ -28,6 +28,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       const response = await authService.login({ email, password });
       localStorage.setItem('token', response.token);
+      localStorage.setItem('user', JSON.stringify(response.user));
       set({ user: response.user, isAuthenticated: true });
     } catch (error) {
       set({ error: 'Failed to login' });

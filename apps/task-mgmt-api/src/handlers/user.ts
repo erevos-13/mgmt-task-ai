@@ -4,9 +4,8 @@ import { comparePasswords, hashPassword } from '../modules/auth';
 
 import { createJWT } from '../modules/auth';
 import { uploadImage } from '../modules/cloudinary';
-import { File } from 'buffer';
 
-export const createNewUser = async (req: Request, res: Response) => {
+export const register = async (req: Request, res: Response) => {
   const hash = await hashPassword(req.body.password);
 
   const user = await prisma.user.create({
@@ -72,7 +71,6 @@ export const updateProfile = async (
         size: file.size,
       });
     }
-    debugger;
     let imageUrlUploaded;
     if (req.file) {
       imageUrlUploaded = await uploadImage(req.file);

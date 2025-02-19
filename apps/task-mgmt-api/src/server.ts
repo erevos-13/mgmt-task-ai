@@ -2,8 +2,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import * as path from 'path';
 import routers from './routes';
 import { protect } from './modules/auth';
-import { signin } from './handlers/user';
-import { createNewUser } from './handlers/user';
+import { register, signin } from './handlers/user';
 import { validate } from './modules/middleware';
 import { body } from 'express-validator';
 import cors from 'cors';
@@ -20,9 +19,9 @@ appExpress.post(
   '/user/signup',
   validate([
     body('email').isEmail(),
-    body('password').isLength({ min: 5 }).isString().isAlphanumeric(),
+    body('password').isLength({ min: 5 }).isString(),
   ]),
-  createNewUser
+  register
 );
 appExpress.post('/user/signin', validate([body('email').isEmail()]), signin);
 

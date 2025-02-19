@@ -24,8 +24,8 @@ export const authService = {
     return data;
   },
 
-  async register(userData: RegisterData): Promise<void> {
-    await axios.post('/auth/register', userData);
+  async register(userData: LoginCredentials): Promise<void> {
+    await axios.post('/user/signup', userData);
   },
 
   async getCurrentUser(): Promise<User> {

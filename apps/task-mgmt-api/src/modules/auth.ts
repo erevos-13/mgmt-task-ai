@@ -27,7 +27,7 @@ export const protect = (req: any, res: any, next: any) => {
   }
 
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET as string);
+    const payload = verifyToken(token);
     req.user = payload;
     console.log(payload);
     next();
@@ -46,4 +46,8 @@ export const comparePasswords = (password: any, hash: any) => {
 
 export const hashPassword = (password: any) => {
   return bcrypt.hash(password, 5);
+};
+
+export const verifyToken = (token: string) => {
+  return jwt.verify(token, process.env.JWT_SECRET as string);
 };

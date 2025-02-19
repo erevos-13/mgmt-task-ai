@@ -1,7 +1,9 @@
-import { FC, useState, useEffect } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { FC, useEffect, useState } from 'react';
 import { Task } from '../models/task';
 import { User } from '../models/user';
 import { UserSelect } from './user-select';
+import { tasksService } from '../services/tasks.service';
 
 interface TaskModalProps {
   task?: Task;
@@ -40,9 +42,13 @@ export const TaskModal: FC<TaskModalProps> = ({
     setEditedTask(task || emptyTask);
   }, [task, isOpen]);
 
+  const { mutate, isPending } = useMutation({
+    mutationFn: (task: Task) => tasksService.createTask(task),
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(editedTask);
+    mutate(editedTask);
     onClose();
   };
 

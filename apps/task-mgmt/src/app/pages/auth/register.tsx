@@ -1,5 +1,8 @@
+import { useMutation } from '@tanstack/react-query';
 import { FC, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { RegisterData } from '../../models/user';
+import { authService } from '../../services/auth.service';
 
 const Register: FC = () => {
   const navigate = useNavigate();
@@ -9,6 +12,10 @@ const Register: FC = () => {
     confirmPassword: '',
   });
   const [error, setError] = useState('');
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: (user: RegisterData) => authService.register(user),
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +28,8 @@ const Register: FC = () => {
 
     // TODO: Implement actual registration logic
     console.log('Register:', formData);
-    navigate('/login'); // Redirect to login after registration
+    mutate(formData);
+    navigate('/');
   };
 
   return (

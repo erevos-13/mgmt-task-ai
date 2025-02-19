@@ -3,6 +3,8 @@ import { FC, useState } from 'react';
 import { Task } from '../../models/task';
 import { TaskCard } from '../../components/task-card';
 import { TaskModal } from '../../components/task-modal';
+import { useQuery } from '@tanstack/react-query';
+import { tasksService } from '../../services/tasks.service';
 
 const Column: FC<{
   title: string;
@@ -44,32 +46,44 @@ const Column: FC<{
 );
 
 const Home: FC = () => {
-  const [tasks, setTasks] = useState<Task[]>([
-    {
-      id: 1,
-      title: 'Implement Authentication',
-      description: 'Set up JWT authentication for the API',
-      priority: 'HIGH',
-      status: 'TODO',
-      assignedTo: { email: 'john@example.com' },
-    },
-    {
-      id: 2,
-      title: 'Design Dashboard',
-      description: 'Create wireframes for the main dashboard',
-      priority: 'MEDIUM',
-      status: 'IN_PROGRESS',
-      assignedTo: { email: 'jane@example.com' },
-    },
-    {
-      id: 3,
-      title: 'User Testing',
-      description: 'Conduct user testing sessions',
-      priority: 'LOW',
-      status: 'DONE',
-      assignedTo: { email: 'test@example.com' },
-    },
-  ]);
+  // const [tasks, setTasks] = useState<Task[]>([
+  // {
+  //   id: 1,
+  //   title: 'Implement Authentication',
+  //   description: 'Set up JWT authentication for the API',
+  //   priority: 'HIGH',
+  //   status: 'TODO',
+  //   assignedTo: { email: 'john@example.com' },
+  // },
+  // {
+  //   id: 2,
+  //   title: 'Design Dashboard',
+  //   description: 'Create wireframes for the main dashboard',
+  //   priority: 'MEDIUM',
+  //   status: 'IN_PROGRESS',
+  //   assignedTo: { email: 'jane@example.com' },
+  // },
+  // {
+  //   id: 3,
+  //   title: 'User Testing',
+  //   description: 'Conduct user testing sessions',
+  //   priority: 'LOW',
+  //   status: 'DONE',
+  //   assignedTo: { email: 'test@example.com' },
+  // },
+  // ]);
+
+  const {
+    data: tasks,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ['tasks'],
+    queryFn: () => tasksService.getTasks(),
+  });
+
+  console.log({ tasks, isLoading, error });
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const onDragEnd = (result: DropResult) => {
@@ -84,8 +98,10 @@ const Home: FC = () => {
       return;
     }
 
-    const updatedTasks = Array.from(tasks);
-    const taskIndex = tasks.findIndex((t) => t.id.toString() === draggableId);
+    const updatedTasks = Array.from(tasks || []);
+    const taskIndex = updatedTasks.findIndex(
+      (t) => t.id.toString() === draggableId
+    );
     const [movedTask] = updatedTasks.splice(taskIndex, 1);
 
     movedTask.status = destination.droppableId as Task['status'];
@@ -97,22 +113,24 @@ const Home: FC = () => {
 
     updatedTasks.splice(insertIndex, 0, movedTask);
 
-    setTasks(updatedTasks);
+    // setTasks(updatedTasks);
   };
 
   const getColumnTasks = (status: Task['status']) =>
-    tasks.filter((task) => task.status === status);
+    (tasks || []).filter((task) => task.status === status);
 
   const handleTaskSave = (newTask: Task) => {
     if (newTask.id === 0) {
       // This is a new task
-      const maxId = Math.max(0, ...tasks.map((task) => task.id));
-      setTasks([...tasks, { ...newTask, id: maxId + 1 }]);
+      const maxId = Math.max(0, ...(tasks || []).map((task) => task.id));
+      // setTasks([...tasks, { ...newTask, id: maxId + 1 }]);
     } else {
       // This is an existing task being updated
-      setTasks(tasks.map((task) => (task.id === newTask.id ? newTask : task)));
+      // setTasks(tasks.map((task) => (task.id === newTask.id ? newTask : task)));
     }
   };
+
+  if (isLoading) return <div>Loading...</div>;
 
   return (
     <div className="container mx-auto px-4 py-8">
